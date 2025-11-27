@@ -1,0 +1,99 @@
+from __future__ import annotations
+from typing import Optional
+from datetime import datetime
+import uuid
+
+from src.account import Account, AccountType, DebitAccount, CreditAccount, SavingAccount
+from src.client import Client
+from src.atm import ATM
+
+
+class Bank:
+    def __init__(
+        self,
+        name: str,
+        account_types: list[AccountType],
+        withdrawal_limit: int,
+        credit_limit: Optional[int] = None,
+        commission : Optional[int] = None,
+        deposit_time: Optional[int] = None,
+        interest_rate: Optional[int] = None
+    ) -> None:
+        self.id: uuid.UUID = uuid.uuid4()
+        self.name = name
+        self.clients: dict[str, Client] = {} # доступ к клиентам по email, поэтому str, а не uuid
+
+        self.account_types = account_types
+        self.accounts: dict[uuid.UUID, Account] = {}
+
+        self.atms: dict[uuid.UUID, ATM] = {}
+
+        self.credit_limit = credit_limit
+        self.credit_commission = commission
+        self.withdrawal_limit = withdrawal_limit
+        self.deposit_time = deposit_time
+        self.interest_rate = interest_rate
+
+    def update_credit_limit(self, new_limit: int) -> None:
+        if new_limit < 0:
+            raise ValueError("Кредитный лимит не может быть отрицательным")
+        self.credit_limit = new_limit
+
+    def update_withdrawal_limit(self, new_limit: int) -> None:
+        if new_limit < 0:
+            raise ValueError("Лимит снятия не может быть отрицательным")
+        self.withdrawal_limit = new_limit
+
+    def update_deposit_time(self, new_time: int) -> None:
+        if not isinstance(new_time, int):
+            raise ValueError("deposit_time должен быть числом месяцев")
+        self.deposit_time = new_time
+    
+    def update_interest_rate(self, new_rate: int) -> None:
+        if not new_rate > 0:
+            raise ValueError("проценты по вкладу должны быть положительны")
+        self.interest_rate = new_rate
+
+    def add_account_type(self, new_type: AccountType) -> None:
+        if new_type in self.account_types:
+            raise ValueError("Такой тип аккаунта уже существует")
+        self.account_types.append(new_type)
+
+    def add_client(self, client: Client) -> None:
+        """Добавляет клиента в банк"""
+        if client.email in self.clients.keys():
+            raise ValueError("Клиент уже существует в банке")
+        self.clients[client.email] = client
+
+    def register_account(self, new_acc: Account) -> None:
+        """Регистрирует уже созданный аккаунт в банке."""
+
+        if new_acc.type not in self.account_types:
+            raise ValueError(f"Банк не поддерживает тип счёта: {new_acc.type}")
+
+        if new_acc.bank.id != self.id:
+            raise ValueError("Нельзя добавить аккаунт другого банка")
+
+        self.accounts[new_acc.id] = new_acc
+
+    @staticmethod
+    def is_interest_day() -> bool:
+        """Раз в месяц — 1 числа"""
+        return datetime.today().day == 1
+
+    def pay_interest(self) -> None:
+        if self.is_interest_day():
+            for acc in self.accounts.values():
+                if isinstance(acc, SavingAccount):
+                    acc.pay_interest()
+
+    def get_commission(self) -> None:
+        if self.is_interest_day():
+            for acc in self.accounts.values():
+                if isinstance(acc, CreditAccount):
+                    acc.get_commission()
+
+
+    def open_atm(self) -> None:
+        atm = ATM(self, initial_cash=30000)
+        self.atms[atm.id] = atm
