@@ -5,6 +5,7 @@ from typing import Optional
 
 from src.app import AppSession, AppMode
 from src.bank import Bank
+from src.storage import Storage
 
 
 class InputHandler:
@@ -16,8 +17,10 @@ class InputHandler:
     - навигацией по режимам ONLINE / ATM
     """
 
-    def __init__(self, banks: list[Bank]) -> None:
-        self.banks = banks
+    def __init__(self) -> None:
+        self.banks = Storage.load_all()
+        if not self.banks:
+            print("Не удалось загрузить банки из CSV")
         self.session: Optional[AppSession] = None
 
     def run(self) -> None:
@@ -38,6 +41,7 @@ class InputHandler:
                         self._show_atm_menu()
             except (KeyboardInterrupt, EOFError):
                 print("\nВыход из приложения.")
+                Storage.save_all(self.banks)
                 break
 
 
@@ -74,6 +78,7 @@ class InputHandler:
     def _reset_session(self) -> None:
         """Полностью завершает сессию и возвращает к выбору банка."""
         if self.session is not None:
+            Storage.save_all(self.banks)
             self.session.logout()
         self.session = None
 
