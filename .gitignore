@@ -3,3 +3,12 @@ __pycache__/
 venv/
 .DS_Store
 .vscode/
+docs/build/
+docs/source/_autosummary/
+.mypy_cache/
+htmlcov/
+coverage.xml
+.coverage
+public/
+*.log
+*.tmp
