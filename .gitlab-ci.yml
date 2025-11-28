@@ -7,6 +7,10 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
+default:
+  tags:
+    - local
+
 before_script:
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
@@ -37,5 +41,6 @@ pages:
       - public
     expire_in: 1 week
   only:
+    - dev
     - main
     - master
