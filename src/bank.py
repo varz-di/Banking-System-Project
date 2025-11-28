@@ -35,28 +35,38 @@ class Bank:
         self.interest_rate = interest_rate
 
     def update_credit_limit(self, new_limit: int) -> None:
-        if new_limit < 0:
-            raise ValueError("Кредитный лимит не может быть отрицательным")
+        if not isinstance(new_limit, int):
+            raise ValueError("Кредитный лимит должен быть натуральным числом")
+        if new_limit <= 0:
+            raise ValueError("Кредитный лимит должен быть положительным")
         self.credit_limit = new_limit
 
     def update_withdrawal_limit(self, new_limit: int) -> None:
+        if not isinstance(new_limit, int):
+            raise ValueError("Лимит снятия должен быть натуральным числом")
         if new_limit < 0:
-            raise ValueError("Лимит снятия не может быть отрицательным")
+            raise ValueError("Лимит снятия должен быть положительным")
         self.withdrawal_limit = new_limit
 
     def update_deposit_time(self, new_time: int) -> None:
         if not isinstance(new_time, int):
-            raise ValueError("deposit_time должен быть числом месяцев")
+            raise ValueError("deposit_time должен быть положительным числом месяцев")
+        if new_time <= 0:
+            raise ValueError("deposit_time должен быть положительным числом месяцев")
         self.deposit_time = new_time
     
     def update_interest_rate(self, new_rate: int) -> None:
-        if not new_rate > 0:
-            raise ValueError("проценты по вкладу должны быть положительны")
+        if not isinstance(new_rate, int):
+            raise ValueError("Проценты по вкладу должны быть положительным числом")
+        if new_rate <= 0:
+            raise ValueError("Проценты по вкладу должны быть положительным числом")
         self.interest_rate = new_rate
 
     def add_account_type(self, new_type: AccountType) -> None:
+        if not isinstance(new_type, AccountType):
+            raise ValueError("Такого типа счета не существует")
         if new_type in self.account_types:
-            raise ValueError("Такой тип аккаунта уже существует")
+            raise ValueError("Такой тип счета уже добавлен")
         self.account_types.append(new_type)
 
     def add_client(self, client: Client) -> None:
