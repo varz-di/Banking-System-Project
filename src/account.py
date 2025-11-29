@@ -42,7 +42,7 @@ class Account(ABC):
     
     @property
     @abstractmethod
-    def withdrawal_limit(self) -> None:
+    def withdrawal_limit(self) -> int:
         """
         Для дебетовых и накопительных после истечения срока действия -
         устанавливает лимит на снятие по условиям банка, 
@@ -53,7 +53,7 @@ class Account(ABC):
         Для накопительных до истечения срока действия устанавливает 0
         (нельзя снимать)
         """
-        pass
+        raise NotImplementedError
 
 
 class DebitAccount(Account):
@@ -85,8 +85,11 @@ class CreditAccount(Account):
             pin_code="0000",
         )
 
-        self.credit_limit: int = bank.credit_limit
-        self.commission: int = bank.credit_commission
+        if  bank.credit_limit and bank.credit_commission:
+            self.credit_limit: int = bank.credit_limit
+            self.commission: int = bank.credit_commission
+        else:
+            raise ValueError("Банк не поддерживает открытие кредитных счетов")
     
     @property
     def withdrawal_limit(self) -> int:
@@ -111,8 +114,11 @@ class SavingAccount(Account):
             pin_code="0000",
         )
 
-        self.interest_rate: int = bank.interest_rate
-        self.valid_until: datetime = self._compute_valid_until(bank.deposit_time)
+        if bank.interest_rate and bank.deposit_time:
+            self.interest_rate: int = bank.interest_rate
+            self.valid_until: datetime = self._compute_valid_until(bank.deposit_time)
+        else:
+            raise ValueError("Банк не поддерживает открытие сберегательных счетов")
 
     @staticmethod
     def _compute_valid_until(deposit_time: int) -> datetime:

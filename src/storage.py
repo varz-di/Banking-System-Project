@@ -4,6 +4,7 @@ import csv
 import uuid
 from datetime import datetime
 from pathlib import Path
+from typing import Union
 
 from src.bank import Bank
 from src.atm import ATM
@@ -231,7 +232,7 @@ class Storage:
                         house=r["house"],
                         building=r["building"] or None,
                     )
-
+            
                 try:
                     client_builder = ClientBuilder()
                     client = (client_builder
@@ -275,6 +276,7 @@ class Storage:
                     continue
 
                 acc_type = AccountType(r["type"])
+                acc: Union[DebitAccount, CreditAccount, SavingAccount]
 
                 if acc_type == AccountType.DEBIT:
                     acc = DebitAccount(bank, client)

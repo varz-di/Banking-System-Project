@@ -110,12 +110,15 @@ class AppSession:
         Все действия с профилем клиента можно делать только через приложение 
         и после авторизации, нужна проверка
         """
-        return self.current_mode == AppMode.ONLINE and self.current_client
+        if self.current_mode == AppMode.ONLINE and self.current_client is not None:
+            return True
+        return False
     
     def update_profile_address(self, country: str, city: str, street: str, house: str, building: Optional[str] = None):
         self._check_online()
         new_address = Address(country, city, street, house, building)
         try:
+            assert self.current_client is not None # пишем чтобы mypy не ругался, реальная проверка в _check_online()
             self.current_client.update_address(new_address)
             print("Адрес успешно обновлен.")
         except ValueError as e:
@@ -125,6 +128,7 @@ class AppSession:
     def update_profile_passport(self, passport_number: str):
         self._check_online()
         try:
+            assert self.current_client is not None
             self.current_client.update_passport(passport_number)
             print("Паспортные данные обновлены.")
         except ValueError as e:
@@ -134,6 +138,7 @@ class AppSession:
     def update_profile_password(self, new_password: str):
         self._check_online()
         try:
+            assert self.current_client is not None
             self.current_client.update_password(new_password)
             print("Новый пароль установлен")
         except ValueError as e:
@@ -151,7 +156,9 @@ class AppSession:
         """
         self._check_online()
         
-        new_acc = None
+        new_acc : Union[DebitAccount, CreditAccount, SavingAccount]
+        assert self.current_client is not None # пишем чтобы mypy не ругался, реальная проверка в _check_online()
+
         if acc_type_str == "debit":
             new_acc = DebitAccount(self.bank, self.current_client)
         elif acc_type_str == "credit":
@@ -172,6 +179,7 @@ class AppSession:
     def make_transfer(self, source_acc_id: uuid.UUID, target_acc_id: uuid.UUID, amount: int):
         """Перевод средств между счетами (используя TransactionService)"""
         self._check_online()
+        assert self.current_client is not None # пишем чтобы mypy не ругался, реальная проверка в _check_online()
 
         if source_acc_id not in self.current_client.accounts.keys():
             raise ValueError("Счет списания не найден у текущего пользователя.")
@@ -198,6 +206,8 @@ class AppSession:
     def atm_withdraw(self, amount: int):
         """Снятие наличных"""
         self._check_atm()
+        assert self.current_atm is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
+        assert self.current_account is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
         try:
             self.current_atm.withdraw(self.current_account, amount)
             print(f"Успешно снято {amount}. Баланс: {self.current_account.balance}")
@@ -208,6 +218,8 @@ class AppSession:
     def atm_deposit(self, amount: int):
         """Внесение наличных"""
         self._check_atm()
+        assert self.current_atm is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
+        assert self.current_account is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
         try:
             self.current_atm.deposit(self.current_account, amount)
             print(f"Успешно внесено {amount}. Баланс: {self.current_account.balance}")

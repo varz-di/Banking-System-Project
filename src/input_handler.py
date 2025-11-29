@@ -85,6 +85,8 @@ class InputHandler:
 
     def _show_bank_root_menu(self) -> None:
 
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print(f"\n=== Банк: {self.session.bank.name} ===")
         print("1. Регистрация клиента")
         print("2. Вход в онлайн-банк")
@@ -108,6 +110,8 @@ class InputHandler:
             print("Неизвестная команда.")
 
     def _show_online_menu(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
 
         print(f"\n=== Онлайн-банк ({self.session.bank.name}) ===")
         print("1. Посмотреть мои счета")
@@ -146,6 +150,8 @@ class InputHandler:
 
     def _show_atm_menu(self) -> None:
 
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print(f"\n=== Банкомат ({self.session.bank.name}) ===")
         print("1. Снять наличные")
         print("2. Внести наличные")
@@ -170,6 +176,9 @@ class InputHandler:
     
 
     def _handle_register(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Регистрация клиента ===")
         first_name = input("Имя: ").strip()
         last_name = input("Фамилия: ").strip()
@@ -182,6 +191,9 @@ class InputHandler:
             print(f"Ошибка регистрации: {e}")
 
     def _handle_login_online(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Вход в онлайн-банк ===")
         email = input("Email: ").strip()
         password = input("Пароль: ").strip()
@@ -192,6 +204,9 @@ class InputHandler:
             print(f"Ошибка входа: {e}")
 
     def _handle_login_atm(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         bank = self.session.bank
         print("\n=== Вход через банкомат ===")
 
@@ -220,11 +235,17 @@ class InputHandler:
             print(f"Ошибка входа в банкомат: {e}")
 
     def _handle_show_accounts(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Мои счета ===")
         info = self.session.get_my_accounts_info()
         print(info or "У вас нет открытых счетов.")
 
     def _handle_open_account(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Открыть новый счет ===")
         print("Доступные типы: debit, credit, deposit")
         acc_type = input("Тип счета: ").strip().lower()
@@ -235,6 +256,9 @@ class InputHandler:
             print(f"Ошибка: {e}")
 
     def _handle_transfer(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Перевод между счетами ===")
         print("Ваши счета:")
         print(self.session.get_my_accounts_info() or "У вас нет счетов.")
@@ -257,6 +281,9 @@ class InputHandler:
             print(f"Ошибка перевода: {e}")
 
     def _handle_update_address(self) -> None:
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
         print("\n=== Обновление адреса ===")
         country = input("Страна: ").strip()
         city = input("Город: ").strip()
@@ -270,7 +297,8 @@ class InputHandler:
             print(f"Ошибка: {e}")
 
     def _handle_update_passport(self) -> None:
-        assert self.session is not None
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
 
         print("\n=== Обновление паспорта ===")
         passport = input("Номер паспорта: ").strip()
@@ -280,7 +308,9 @@ class InputHandler:
             print(f"Ошибка: {e}")
 
     def _handle_update_password(self) -> None:
-        assert self.session is not None
+        
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
 
         print("\n=== Смена пароля ===")
         new_password = input("Новый пароль: ").strip()
@@ -291,7 +321,9 @@ class InputHandler:
 
 
     def _handle_atm_withdraw(self) -> None:
-        assert self.session is not None
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
 
         print("\n=== Снятие наличных ===")
         amount_str = input("Сумма: ").strip()
@@ -307,7 +339,9 @@ class InputHandler:
             print(f"Ошибка: {e}")
 
     def _handle_atm_deposit(self) -> None:
-        assert self.session is not None
+
+        assert self.session is not None # для mypy, реальная проверка через цикл в run
+
 
         print("\n=== Внесение наличных ===")
         amount_str = input("Сумма: ").strip()

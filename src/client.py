@@ -89,8 +89,8 @@ class Client:
             raise ValueError("Пароль должен быть длиной от 6 символов, содержать хотя бы одну букву и одну цифру")
         self.password = new_password
 
-    def update_address(self, address: Address) -> None:
-        if not address.is_valid:
+    def update_address(self, address: Address | None) -> None:
+        if address is None or (address is not None and not address.is_valid):
             raise ValueError("Адрес некорректен")
         self.address = address
 
@@ -156,13 +156,13 @@ class ClientBuilder:
         self._password = password
         return self
 
-    def set_address(self, address: Address) -> ClientBuilder:
-        if not address.is_valid:
+    def set_address(self, address: Address | None) -> ClientBuilder:
+        if address is None or (address is not None and not address.is_valid):
             raise ValueError("Адрес некорректен")
         self._address = address
         return self
 
-    def set_passport(self, passport_number: str) -> ClientBuilder:
+    def set_passport(self, passport_number: str | None) -> ClientBuilder:
         self._passport_number = passport_number
         return self
 
