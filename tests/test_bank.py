@@ -138,16 +138,15 @@ class TestRegisterAcc():
         client = DummyClient("a@a")
         other = Bank("Other", [AccountType.CREDIT], 10)
 
-        acc = CreditAccount(other, client)
-
         with pytest.raises(ValueError):
+            acc = CreditAccount(other, client)
             bank.register_account(acc)
 
     @staticmethod
     def test_wrong_bank():
         bank= Bank("B", [AccountType.DEBIT, AccountType.CREDIT], 10)
         client= DummyClient("a@a")
-        other = Bank("Other", [AccountType.CREDIT], 10)
+        other = Bank("Other", [AccountType.CREDIT], 10, 10000, 1000)
 
         acc = CreditAccount(other, client)
 
