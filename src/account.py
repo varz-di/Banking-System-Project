@@ -76,7 +76,6 @@ class DebitAccount(Account):
 
 class CreditAccount(Account):
     def __init__(self, bank: "Bank", client: "Client"):
-
         super().__init__(
             id=uuid.uuid4(),
             type=AccountType.CREDIT,
@@ -132,9 +131,12 @@ class SavingAccount(Account):
         1 декабря и 1 января.
         """
         months = deposit_time
-        first_interest_day = datetime(datetime.today().year, datetime.today().month + 1, 1)
+        first_interest_year = datetime.today().year + (datetime.today().month + 1) // 12
+        first_interest_month = (datetime.today().month + 1) % 12
+        first_interest_day = datetime(first_interest_year, first_interest_month, 1)
+
         last_interest_year = first_interest_day.year + (first_interest_day.month + months - 1) // 12
-        last_interest_month = month = (datetime.today().month - 1 + months) % 12 + 1
+        last_interest_month = (first_interest_month - 1 + months) % 12 + 1
         return datetime(last_interest_year, last_interest_month, 1)
 
     @property
