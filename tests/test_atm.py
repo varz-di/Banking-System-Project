@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from src.atm import ATM
 from src.account import DebitAccount
 from src.transaction import TransactionService
+from src.bank import BankStats
 
 
 class DummyClient:
@@ -21,6 +22,7 @@ class DummyBank:
         self.credit_commission = 1000
         self.deposit_time = 3
         self.interest_rate = 5
+        self.stats: dict[str, BankStats] = {}
 
 
 def test_init():

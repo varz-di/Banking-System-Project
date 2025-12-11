@@ -2,14 +2,14 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from datetime import date
 from enum import Enum
 from typing import TYPE_CHECKING
 import uuid
-
+from src.bank_stats import BankStats
 if TYPE_CHECKING:
     from src.client import Client
     from src.bank import Bank
-
 
 class AccountType(Enum):
     DEBIT = "debit"
@@ -102,6 +102,13 @@ class CreditAccount(Account):
         if self.balance < 0:
             self.balance -= self.commission
 
+            bank = self.bank
+            today = date.today().isoformat()
+            if today not in bank.stats:
+                bank.stats[today] = BankStats()
+
+            bank.stats[today].interest_collected += self.commission
+
 
 class SavingAccount(Account):
     def __init__(self, bank: "Bank", client: "Client"):
@@ -158,4 +165,12 @@ class SavingAccount(Account):
         if not self.is_active:
             return
         # простые проценты (пока что)
-        self.balance += int(self.balance * self.interest_rate / 100)
+        amount = int(self.balance * self.interest_rate / 100)
+        self.balance += amount
+
+        bank = self.bank
+        today = date.today().isoformat()
+        if today not in bank.stats:
+            bank.stats[today] = BankStats()
+
+        bank.stats[today].interest_paid += amount

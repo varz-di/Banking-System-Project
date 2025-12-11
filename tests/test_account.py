@@ -27,6 +27,7 @@ class DummyBank:
         self.credit_commission = credit_commission
         self.interest_rate = interest_rate
         self.deposit_time = deposit_time
+        self.stats = {}
 
 
 def test_account_type():

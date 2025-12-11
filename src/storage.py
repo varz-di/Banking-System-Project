@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Union
 
+from src.bank_stats import BankStats
 from src.bank import Bank
 from src.atm import ATM
 from src.client import ClientBuilder, Address
@@ -17,6 +18,7 @@ BANKS_FILE = DIR_PATH / "banks.csv"
 CLIENTS_FILE = DIR_PATH / "clients.csv"
 ACCOUNTS_FILE = DIR_PATH / "accounts.csv"
 ATMS_FILE = DIR_PATH / "atms.csv"
+STATS_FILE = DIR_PATH / "stats.csv"
 
 
 class Storage:
@@ -154,6 +156,31 @@ class Storage:
                     })
 
     @staticmethod
+    def save_stats(banks: list[Bank]) -> None:
+        with open(STATS_FILE, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["bank_id", 
+                             "date", 
+                             "accounts", 
+                             "deposited", 
+                             "withdrawn",
+                             "interest_collected",
+                             "interest_paid"
+                             ])
+
+            for bank in banks:
+                for date_str, stats in bank.stats.items():
+                    writer.writerow([
+                        bank.id,
+                        date_str,
+                        stats.opened_accounts,
+                        stats.atm_deposited,
+                        stats.atm_withdrawn,
+                        stats.interest_collected,
+                        stats.interest_paid
+                    ])
+
+    @staticmethod
     def save_all(banks: list[Bank]) -> None:
         """
         Сохраняет всю систему в файлы.
@@ -162,6 +189,7 @@ class Storage:
         Storage.save_clients(banks)
         Storage.save_accounts(banks)
         Storage.save_atms(banks)
+        Storage.save_stats(banks)
 
 
     @staticmethod
@@ -324,6 +352,31 @@ class Storage:
 
                 bank.atms[atm.id] = atm
 
+
+    @staticmethod
+    def load_stats(banks: dict[uuid.UUID, Bank]) -> None:
+        if not STATS_FILE.exists():
+            return
+        
+        with open(STATS_FILE) as f:
+            reader = csv.DictReader(f)
+
+            for r in reader:
+                bank_id = uuid.UUID(r["bank_id"])
+                bank = banks.get(bank_id)
+                if not bank:
+                    continue
+                date_str = r["date"]
+                bank.stats[date_str] = BankStats(
+                    opened_accounts=int(r["accounts"]),
+                    atm_deposited=int(r["deposited"]),
+                    atm_withdrawn=int(r["withdrawn"]),
+                    interest_collected=int(r["interest_collected"]),
+                    interest_paid=int(r["interest_paid"])
+                )
+
+
+
     @staticmethod
     def load_all() -> list[Bank]:
         """
@@ -333,4 +386,5 @@ class Storage:
         Storage.load_clients(banks)
         Storage.load_accounts(banks)
         Storage.load_atms(banks)
+        Storage.load_stats(banks)
         return list(banks.values())

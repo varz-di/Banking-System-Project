@@ -1,6 +1,8 @@
 import uuid
 import pytest
 
+from datetime import date
+
 from src.app import AppSession, AppMode
 from src.bank import Bank
 from src.client import Client, ClientBuilder, Address

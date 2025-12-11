@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 from src.account import Account, AccountType, DebitAccount, CreditAccount, SavingAccount
 from src.client import Client
 from src.atm import ATM
-
+from src.bank_stats import BankStats
 
 class Bank:
     def __init__(
@@ -33,6 +33,8 @@ class Bank:
         self.withdrawal_limit = withdrawal_limit
         self.deposit_time = deposit_time
         self.interest_rate = interest_rate
+
+        self.stats: dict[str, BankStats] = {}
 
     def update_credit_limit(self, new_limit: int) -> None:
         if not isinstance(new_limit, int):
@@ -86,12 +88,19 @@ class Bank:
 
         self.accounts[new_acc.id] = new_acc
 
+        today = date.today().isoformat()
+        if today not in self.stats:
+            self.stats[today] = BankStats()
+        self.stats[today].opened_accounts += 1
+
+
     @staticmethod
     def is_interest_day() -> bool:
-        """Раз в месяц — 1 числа"""
+        """Проверка на то, что сейчас первое число месяца - день сбора и выплаты процентов"""
         return datetime.today().day == 1
 
     def pay_interest(self) -> None:
+        """Раз в месяц (1 числа) собирает проценты со всех кредитных счетов"""
         if self.is_interest_day():
             for acc in self.accounts.values():
                 if isinstance(acc, SavingAccount):

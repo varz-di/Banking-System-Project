@@ -1,11 +1,11 @@
 from __future__ import annotations
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import uuid
 from typing import TYPE_CHECKING
 
 from src.transaction import TransactionService
 from src.account import Account
-
+from src.bank_stats import BankStats
 if TYPE_CHECKING:
     from src.bank import Bank
 
@@ -51,6 +51,14 @@ class ATM:
         TransactionService.withdraw(account, amount)
         self.cash_balance -= amount
 
+        bank = self.bank
+        today = date.today().isoformat()
+        if today not in bank.stats:
+            bank.stats[today] = BankStats()
+
+        bank.stats[today].atm_withdrawn += amount
+
+
     def deposit(self, account: Account, amount: int) -> None:
         """
         Внесение наличных через банкомат.
@@ -60,3 +68,10 @@ class ATM:
 
         TransactionService.deposit(account, amount)
         self.cash_balance += amount
+
+        bank = self.bank
+        today = date.today().isoformat()
+        if today not in bank.stats:
+            bank.stats[today] = BankStats()
+
+        bank.stats[today].atm_deposited += amount
