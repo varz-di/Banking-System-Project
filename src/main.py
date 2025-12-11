@@ -1,8 +1,6 @@
-from src.input_handler import InputHandler
-from src.bank import Bank
-from src.account import AccountType
+from src.app_interface import AppGUI
 
 
 if __name__ == "__main__":
-    my_handler = InputHandler()
+    my_handler = AppGUI()
     my_handler.run()
