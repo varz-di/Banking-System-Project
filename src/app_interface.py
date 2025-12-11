@@ -292,11 +292,11 @@ class AppGUI:
 
     def _submit_update_address(self, values: list[str]) -> None:
         country, city, street, house, building = values
-        building = building or None
+        building_or_none = building or None
 
         try:
             assert self.session is not None
-            self.session.update_profile_address(country, city, street, house, building)
+            self.session.update_profile_address(country, city, street, house, building_or_none)
             messagebox.showinfo("OK", "Адрес обновлён.")
         except (ValueError, PermissionError) as e:
             messagebox.showerror("Ошибка", str(e))
