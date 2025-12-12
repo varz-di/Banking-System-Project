@@ -8,6 +8,7 @@ from typing import Optional
 from src.app import AppSession, AppMode
 from src.storage import Storage
 from src.bank import Bank
+from src.stats_drawer import BankStatsDrawer
 
 
 class AppGUI:
@@ -43,7 +44,7 @@ class AppGUI:
         frame = tk.Frame(self.root)
         frame.pack(padx=20, pady=20)
 
-        tk.Label(frame, text="=== Выбор банка ===").pack()
+        tk.Label(frame, text="Выбор банка").pack()
 
         if not self.banks:
             tk.Label(frame, text="Нет доступных банков.").pack()
@@ -88,14 +89,15 @@ class AppGUI:
         frame = tk.Frame(self.root)
         frame.pack(padx=20, pady=20)
 
-        tk.Label(frame, text=f"=== Банк: {self.session.bank.name} ===").pack()
+        tk.Label(frame, text=f"Банк: {self.session.bank.name}").pack()
 
         buttons = [
-            ("1. Регистрация клиента", self._handle_register),
-            ("2. Вход в онлайн-банк", self._handle_login_online),
-            ("3. Вход через банкомат", self._handle_login_atm),
-            ("4. Сменить банк", self._reset_session),
-            ("0. Выход", self._exit_app),
+            ("Регистрация клиента", self._handle_register),
+            ("Вход в онлайн-банк", self._handle_login_online),
+            ("Вход через банкомат", self._handle_login_atm),
+            ("Сменить банк", self._reset_session),
+            ("Вывести статистику по категориям", self.open_stats_window),
+            ("Выход", self._exit_app),
         ]
 
         for text, cmd in buttons:
@@ -110,18 +112,18 @@ class AppGUI:
         frame = tk.Frame(self.root)
         frame.pack(padx=20, pady=20)
 
-        tk.Label(frame, text=f"=== Онлайн-банк ({self.session.bank.name}) ===").pack()
+        tk.Label(frame, text=f"Онлайн-банк ({self.session.bank.name})").pack()
 
         buttons = [
-            ("1. Посмотреть мои счета", self._handle_show_accounts),
-            ("2. Открыть новый счет", self._handle_open_account),
-            ("3. Перевод между счетами", self._handle_transfer),
-            ("4. Обновить адрес", self._handle_update_address),
-            ("5. Обновить паспорт", self._handle_update_passport),
-            ("6. Обновить пароль", self._handle_update_password),
-            ("7. Выйти из аккаунта", self._logout_stay_in_bank),
-            ("8. Сменить банк", self._reset_session),
-            ("0. Выход", self._exit_app),
+            ("Посмотреть мои счета", self._handle_show_accounts),
+            ("Открыть новый счет", self._handle_open_account),
+            ("Перевод между счетами", self._handle_transfer),
+            ("Обновить адрес", self._handle_update_address),
+            ("Обновить паспорт", self._handle_update_passport),
+            ("Обновить пароль", self._handle_update_password),
+            ("Выйти из аккаунта", self._logout_stay_in_bank),
+            ("Сменить банк", self._reset_session),
+            ("Выход", self._exit_app),
         ]
 
         for text, cmd in buttons:
@@ -139,11 +141,11 @@ class AppGUI:
         tk.Label(frame, text=f"=== Банкомат ({self.session.bank.name}) ===").pack()
 
         buttons = [
-            ("1. Снять наличные", self._handle_atm_withdraw),
-            ("2. Внести наличные", self._handle_atm_deposit),
-            ("3. Завершить сеанс банкомата", self._logout_stay_in_bank),
-            ("4. Сменить банк", self._reset_session),
-            ("0. Выход", self._exit_app),
+            ("Снять наличные", self._handle_atm_withdraw),
+            ("Внести наличные", self._handle_atm_deposit),
+            ("Завершить сеанс банкомата", self._logout_stay_in_bank),
+            ("Сменить банк", self._reset_session),
+            ("Выход", self._exit_app),
         ]
 
         for text, cmd in buttons:
@@ -170,7 +172,7 @@ class AppGUI:
     def _handle_register(self) -> None:
         assert self.session is not None
         self._open_form(
-            title="=== Регистрация клиента ===",
+            title="Регистрация клиента",
             fields=["Имя", "Фамилия", "Email", "Пароль"],
             callback=self._submit_register,
         )
@@ -188,7 +190,7 @@ class AppGUI:
     def _handle_login_online(self) -> None:
         assert self.session is not None
         self._open_form(
-            title="=== Вход в онлайн-банк ===",
+            title="Вход в онлайн-банк",
             fields=["Email", "Пароль"],
             callback=self._submit_login_online,
         )
@@ -212,7 +214,7 @@ class AppGUI:
             return
 
         self._open_form(
-            title="=== Вход через банкомат ===",
+            title="Вход через банкомат",
             fields=["ID банкомата", "ID счета (карты)", "PIN-код"],
             callback=self._submit_login_atm,
         )
@@ -237,13 +239,13 @@ class AppGUI:
     def _handle_show_accounts(self) -> None:
         assert self.session is not None
         info = self.session.get_my_accounts_info()
-        messagebox.showinfo("=== Мои счета ===", info or "У вас нет открытых счетов.")
+        messagebox.showinfo("Мои счета", info or "У вас нет открытых счетов.")
 
     def _handle_open_account(self) -> None:
         assert self.session is not None
 
         self._open_form(
-            title="=== Открыть новый счет ===\nДоступные типы: debit, credit, deposit",
+            title="Открыть новый счет \nДоступные типы: debit, credit, deposit",
             fields=["Тип счета"],
             callback=self._submit_open_account,
         )
@@ -260,7 +262,7 @@ class AppGUI:
     def _handle_transfer(self) -> None:
         assert self.session is not None
         self._open_form(
-            title="=== Перевод между счетами ===",
+            title="Перевод между счетами",
             fields=["ID счета списания", "ID счета получателя", "Сумма"],
             callback=self._submit_transfer,
         )
@@ -285,7 +287,7 @@ class AppGUI:
 
     def _handle_update_address(self) -> None:
         self._open_form(
-            title="=== Обновление адреса ===",
+            title="Обновление адреса",
             fields=["Страна", "Город", "Улица", "Дом", "Корпус (опционально)"],
             callback=self._submit_update_address,
         )
@@ -303,7 +305,7 @@ class AppGUI:
 
     def _handle_update_passport(self) -> None:
         self._open_form(
-            title="=== Обновление паспорта ===",
+            title="Обновление паспорта",
             fields=["Номер паспорта"],
             callback=self._submit_update_passport,
         )
@@ -320,7 +322,7 @@ class AppGUI:
 
     def _handle_update_password(self) -> None:
         self._open_form(
-            title="=== Смена пароля ===",
+            title=" Смена пароля",
             fields=["Новый пароль"],
             callback=self._submit_update_password,
         )
@@ -336,7 +338,7 @@ class AppGUI:
 
     def _handle_atm_withdraw(self) -> None:
         self._open_form(
-            title="=== Снятие наличных ===",
+            title="Снятие наличных",
             fields=["Сумма"],
             callback=self._submit_atm_withdraw,
         )
@@ -358,7 +360,7 @@ class AppGUI:
 
     def _handle_atm_deposit(self) -> None:
         self._open_form(
-            title="=== Внесение наличных ===",
+            title="Внесение наличных",
             fields=["Сумма"],
             callback=self._submit_atm_deposit,
         )
@@ -427,6 +429,12 @@ class AppGUI:
             self._show_online_menu()
         elif mode == AppMode.ATM:
             self._show_atm_menu()
+
+    def open_stats_window(self):
+        if not self.session:
+            return 
+
+        BankStatsDrawer(self.root, self.session.bank)
 
 
     def run(self) -> None:
