@@ -29,7 +29,9 @@ class AppSession:
 
 
     def login_online(self, email: str, password: str) -> None:
-        """Вход в приложение"""
+        """
+        Вход в приложение
+        """
         if email not in self.bank.clients.keys():
             raise ValueError("Пользователь с таким email не найден.")
         
@@ -67,7 +69,9 @@ class AppSession:
 
 
     def logout(self) -> None:
-        """Завершение сеанса"""
+        """
+        Завершение сеанса
+        """
         self.current_client = None
         self.current_mode = None
         self.current_atm = None
@@ -76,7 +80,9 @@ class AppSession:
 
 
     def get_my_accounts_info(self) -> str:
-        """Вывод информации о счетах пользователя"""
+        """
+        Вывод информации о счетах пользователя
+        """
         if not self.current_client:
             return "Нет активной сессии."
         
@@ -87,7 +93,9 @@ class AppSession:
 
 
     def register_client(self, first_name: str, last_name: str, email: str, password: str) -> None:
-        """Регистрация нового пользователя"""
+        """
+        Регистрация нового пользователя
+        """
         builder = ClientBuilder()
         try:
             client = (builder
@@ -115,6 +123,9 @@ class AppSession:
         return False
     
     def update_profile_address(self, country: str, city: str, street: str, house: str, building: Optional[str] = None):
+        """
+        Обновляет адрес клиента
+        """
         self._check_online()
         new_address = Address(country, city, street, house, building)
         try:
@@ -126,6 +137,9 @@ class AppSession:
             raise
 
     def update_profile_passport(self, passport_number: str):
+        """
+        Обновляет паспорт клиента
+        """
         self._check_online()
         try:
             assert self.current_client is not None
@@ -136,6 +150,9 @@ class AppSession:
             raise
 
     def update_profile_password(self, new_password: str):
+        """
+        Обновляет пароль клиента
+        """
         self._check_online()
         try:
             assert self.current_client is not None
@@ -177,7 +194,9 @@ class AppSession:
         print(f"Счет типа {acc_type_str} успешно открыт. ID: {new_acc.id}")
 
     def make_transfer(self, source_acc_id: uuid.UUID, target_acc_id: uuid.UUID, amount: int):
-        """Перевод средств между счетами (используя TransactionService)"""
+        """
+        Перевод средств между счетами (используя TransactionService)
+        """
         self._check_online()
         assert self.current_client is not None # пишем чтобы mypy не ругался, реальная проверка в _check_online()
 
@@ -204,7 +223,9 @@ class AppSession:
             raise PermissionError("Эта операция доступна только в режиме банкомата.")
 
     def atm_withdraw(self, amount: int):
-        """Снятие наличных"""
+        """
+        Снятие наличных
+        """
         self._check_atm()
         assert self.current_atm is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
         assert self.current_account is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
@@ -216,7 +237,9 @@ class AppSession:
             raise
 
     def atm_deposit(self, amount: int):
-        """Внесение наличных"""
+        """
+        Внесение наличных
+        """
         self._check_atm()
         assert self.current_atm is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()
         assert self.current_account is not None # пишем чтобы mypy не ругался, реальная проверка в _check_atm()

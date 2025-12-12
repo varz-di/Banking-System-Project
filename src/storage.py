@@ -61,7 +61,7 @@ class Storage:
     @staticmethod
     def save_clients(banks: list[Bank]) -> None:
         """
-        Сохраняет клиентов.
+        Сохраняет клиентов
         """
         with open(CLIENTS_FILE, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
@@ -135,7 +135,7 @@ class Storage:
     @staticmethod
     def save_atms(banks: list[Bank]) -> None:
         """
-        Сохраняет банкоматы.
+        Сохраняет банкоматы
         """
         with open(ATMS_FILE, "w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=[
@@ -157,6 +157,9 @@ class Storage:
 
     @staticmethod
     def save_stats(banks: list[Bank]) -> None:
+        """
+        Сохраняет статистику
+        """
         with open(STATS_FILE, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["bank_id", 
@@ -183,7 +186,7 @@ class Storage:
     @staticmethod
     def save_all(banks: list[Bank]) -> None:
         """
-        Сохраняет всю систему в файлы.
+        Сохраняет всю систему в файлы
         """
         Storage.save_banks(banks)
         Storage.save_clients(banks)
@@ -195,7 +198,7 @@ class Storage:
     @staticmethod
     def load_banks() -> dict[uuid.UUID, Bank]:
         """
-        Загружает банки из banks.csv.
+        Загружает банки из banks.csv
         """
         if not BANKS_FILE.exists():
             return {}
@@ -237,7 +240,7 @@ class Storage:
     @staticmethod
     def load_clients(banks: dict[uuid.UUID, Bank]) -> None:
         """
-        Загружает клиентов и привязывает их к банкам.
+        Загружает клиентов и привязывает их к банкам
         """
         if not CLIENTS_FILE.exists():
             return
@@ -329,7 +332,7 @@ class Storage:
     @staticmethod
     def load_atms(banks: dict[uuid.UUID, Bank]) -> None:
         """
-        Загружает банкоматы и привязывает их к банкам.
+        Загружает банкоматы и привязывает их к банкам
         """
         if not ATMS_FILE.exists():
             return
@@ -355,6 +358,9 @@ class Storage:
 
     @staticmethod
     def load_stats(banks: dict[uuid.UUID, Bank]) -> None:
+        """
+        Загружает статистику и привязывает ее к банкам
+        """
         if not STATS_FILE.exists():
             return
         
@@ -380,7 +386,7 @@ class Storage:
     @staticmethod
     def load_all() -> list[Bank]:
         """
-        Полная загрузка системы.
+        Полная загрузка системы
         """
         banks = Storage.load_banks()
         Storage.load_clients(banks)

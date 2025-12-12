@@ -162,6 +162,7 @@ class SavingAccount(Account):
         return datetime.today() <= self.valid_until
 
     def pay_interest(self) -> None:
+        """Осуществляет выплату процентов по всем накопительным счетам первого числа каждого месяца"""
         if not self.is_active:
             return
         # простые проценты (пока что)

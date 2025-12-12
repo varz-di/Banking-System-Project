@@ -39,6 +39,9 @@ class AppGUI:
             widget.destroy()
 
     def _show_bank_selection_menu(self) -> None:
+        """
+        Показывает главное меню с выбором банка
+        """
         self._clear()
 
         frame = tk.Frame(self.root)
@@ -63,6 +66,9 @@ class AppGUI:
         tk.Button(frame, text="Выбрать", command=self._select_bank).pack(pady=10)
 
     def _select_bank(self) -> None:
+        """
+        Позволяет выбрать банк в главном меню
+        """
         value = self.curr_bank.get()
         if not value:
             messagebox.showerror("Ошибка", "Нужно выбрать банк.")
@@ -82,6 +88,9 @@ class AppGUI:
 
 
     def _show_bank_root_menu(self) -> None:
+        """
+        Показывает меню конкретного банка
+        """
         self._clear()
 
         assert self.session is not None
@@ -105,6 +114,9 @@ class AppGUI:
 
 
     def _show_online_menu(self) -> None:
+        """
+        Показывает страницу работы с приложением банка
+        """
         self._clear()
 
         assert self.session is not None
@@ -131,6 +143,9 @@ class AppGUI:
 
 
     def _show_atm_menu(self) -> None:
+        """
+        Показывает страницу работы с банкоматом
+        """
         self._clear()
 
         assert self.session is not None
@@ -153,11 +168,17 @@ class AppGUI:
 
 
     def _logout_stay_in_bank(self) -> None:
+        """
+        Позволяет выйти из аккаунта, оставшись в банке
+        """
         assert self.session is not None
         self.session.logout()
         self._show_bank_root_menu()
 
     def _reset_session(self) -> None:
+        """
+        Позволяет вернуться к главному меню
+        """
         if self.session is not None:
             Storage.save_all(self.banks)
             self.session.logout()
@@ -165,11 +186,17 @@ class AppGUI:
         self._show_bank_selection_menu()
 
     def _exit_app(self) -> None:
+        """
+        Позволяет выйти из приложения
+        """
         Storage.save_all(self.banks)
         self.root.destroy()
 
 
     def _handle_register(self) -> None:
+        """
+        Показывает окно регистрации в банке
+        """
         assert self.session is not None
         self._open_form(
             title="Регистрация клиента",
@@ -178,6 +205,9 @@ class AppGUI:
         )
 
     def _submit_register(self, values: list[str]) -> None:
+        """
+        Осуществляет регистрацию в банке
+        """
         first_name, last_name, email, password = values
 
         try:
@@ -188,6 +218,9 @@ class AppGUI:
             messagebox.showerror("Ошибка регистрации", str(e))
 
     def _handle_login_online(self) -> None:
+        """
+        Показыват окно входа в приложение банка
+        """
         assert self.session is not None
         self._open_form(
             title="Вход в онлайн-банк",
@@ -196,6 +229,9 @@ class AppGUI:
         )
 
     def _submit_login_online(self, values: list[str]) -> None:
+        """
+        Осуществляет вход в приложение банка
+        """
         email, password = values
 
         try:
@@ -206,6 +242,9 @@ class AppGUI:
             messagebox.showerror("Ошибка входа", str(e))
 
     def _handle_login_atm(self) -> None:
+        """
+        Показывает окно входа в банкомат
+        """
         assert self.session is not None
 
         bank = self.session.bank
@@ -220,6 +259,9 @@ class AppGUI:
         )
 
     def _submit_login_atm(self, values: list[str]) -> None:
+        """
+        Осуществляет вход в банкомат
+        """
         atm_id_str, account_id_str, pin_code = values
 
         try:
@@ -237,11 +279,17 @@ class AppGUI:
             messagebox.showerror("Ошибка входа в банкомат", str(e))
 
     def _handle_show_accounts(self) -> None:
+        """
+        Показывает информацию по открытым счетам клиента
+        """
         assert self.session is not None
         info = self.session.get_my_accounts_info()
         messagebox.showinfo("Мои счета", info or "У вас нет открытых счетов.")
 
     def _handle_open_account(self) -> None:
+        """
+        Показывает окно открытия нового счета
+        """
         assert self.session is not None
 
         self._open_form(
@@ -251,6 +299,9 @@ class AppGUI:
         )
 
     def _submit_open_account(self, values: list[str]) -> None:
+        """
+        Открывает новый счет
+        """
         acc_type = values[0].strip().lower()
         try:
             assert self.session is not None
@@ -260,6 +311,9 @@ class AppGUI:
             messagebox.showerror("Ошибка", str(e))
 
     def _handle_transfer(self) -> None:
+        """
+        Показывает окно перевода
+        """
         assert self.session is not None
         self._open_form(
             title="Перевод между счетами",
@@ -268,6 +322,9 @@ class AppGUI:
         )
 
     def _submit_transfer(self, values: list[str]) -> None:
+        """
+        Осуществляет перевод
+        """
         source_str, target_str, amount_str = values
 
         try:
@@ -286,6 +343,9 @@ class AppGUI:
             messagebox.showerror("Ошибка перевода", str(e))
 
     def _handle_update_address(self) -> None:
+        """
+        Показывает окно обновления адреса клиента
+        """
         self._open_form(
             title="Обновление адреса",
             fields=["Страна", "Город", "Улица", "Дом", "Корпус (опционально)"],
@@ -293,6 +353,9 @@ class AppGUI:
         )
 
     def _submit_update_address(self, values: list[str]) -> None:
+        """
+        Обновляет адрес клиента
+        """
         country, city, street, house, building = values
         building_or_none = building or None
 
@@ -304,6 +367,9 @@ class AppGUI:
             messagebox.showerror("Ошибка", str(e))
 
     def _handle_update_passport(self) -> None:
+        """
+        Показывает окно обновления паспорта клиента
+        """
         self._open_form(
             title="Обновление паспорта",
             fields=["Номер паспорта"],
@@ -311,8 +377,10 @@ class AppGUI:
         )
 
     def _submit_update_passport(self, values: list[str]) -> None:
+        """
+        Обновляет паспорт клиента
+        """       
         passport = values[0]
-
         try:
             assert self.session is not None
             self.session.update_profile_passport(passport)
@@ -321,6 +389,9 @@ class AppGUI:
             messagebox.showerror("Ошибка", str(e))
 
     def _handle_update_password(self) -> None:
+        """
+        Показывает окно обновления пароля клиента
+        """
         self._open_form(
             title=" Смена пароля",
             fields=["Новый пароль"],
@@ -328,6 +399,9 @@ class AppGUI:
         )
 
     def _submit_update_password(self, values: list[str]) -> None:
+        """
+        Обновляет пароль клиента
+        """
         new_password = values[0]
         try:
             assert self.session is not None
@@ -337,6 +411,9 @@ class AppGUI:
             messagebox.showerror("Ошибка", str(e))
 
     def _handle_atm_withdraw(self) -> None:
+        """
+        Показывает окно снятия денег через банкомат
+        """
         self._open_form(
             title="Снятие наличных",
             fields=["Сумма"],
@@ -344,6 +421,9 @@ class AppGUI:
         )
 
     def _submit_atm_withdraw(self, values: list[str]) -> None:
+        """
+        Осуществляет снятие денег через банкомат
+        """
         amount_str = values[0]
         try:
             amount = int(amount_str)
@@ -359,6 +439,9 @@ class AppGUI:
             messagebox.showerror("Ошибка", str(e))
 
     def _handle_atm_deposit(self) -> None:
+        """
+        Показывает окно внесения денег через банкомат
+        """
         self._open_form(
             title="Внесение наличных",
             fields=["Сумма"],
@@ -366,6 +449,9 @@ class AppGUI:
         )
 
     def _submit_atm_deposit(self, values: list[str]) -> None:
+        """
+        Осуществляет внесение денег через банкомат
+        """
         amount_str = values[0]
         try:
             amount = int(amount_str)
@@ -431,6 +517,9 @@ class AppGUI:
             self._show_atm_menu()
 
     def open_stats_window(self):
+        """
+        Показывает окно со статистикой
+        """
         if not self.session:
             return 
 
@@ -438,4 +527,7 @@ class AppGUI:
 
 
     def run(self) -> None:
+        """
+        Запускает работу проекта
+        """
         self.root.mainloop()

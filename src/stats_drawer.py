@@ -32,7 +32,7 @@ class BankStatsDrawer:
         self.draw_plot()
 
     def _build_controls(self):
-        """Верхняя панель с кнопками / выбором."""
+        """Верхняя панель с кнопками / выбором"""
         panel = ttk.Frame(self.root)
         panel.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
@@ -48,7 +48,7 @@ class BankStatsDrawer:
         metric_menu.pack(side=tk.LEFT, padx=10)
 
     def _build_plot(self):
-        """Создание matplotlib в Tkinter."""
+        """Создание matplotlib в Tkinter"""
         self.figure = Figure(figsize=(7, 5), dpi=100)
         self.ax = self.figure.add_subplot(111)
 
@@ -57,7 +57,7 @@ class BankStatsDrawer:
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
 
     def draw_plot(self):
-        """Рисует график по выбранной метрике."""
+        """Рисует график по выбранной метрике"""
         metric_label = self.metric_var.get()
         metric_attr = self.metrics[metric_label]
 

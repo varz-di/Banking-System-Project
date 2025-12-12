@@ -5,15 +5,15 @@ from src.account import Account, SavingAccount
 
 class TransactionService:
     """
-    Сервис транзакций.
+    Сервис транзакций
     Набор универсальных static методов
     """
 
     @staticmethod
     def withdraw(account: Account, amount: int) -> None:
         """
-        Снятие денег со счёта.
-        amount — положительное число.
+        Снятие денег со счёта
+        amount — положительное число
         """
 
         if amount <= 0:
@@ -27,8 +27,8 @@ class TransactionService:
     @staticmethod
     def deposit(account: Account, amount: int) -> None:
         """
-        Пополнение счёта.
-        amount — положительное число.
+        Пополнение счёта
+        amount — положительное число
         """
 
         if amount <= 0:
@@ -42,8 +42,8 @@ class TransactionService:
     @staticmethod
     def transfer(source: Account, target: Account, amount: int) -> None:
         """
-        Перевод между двумя счетами.
-        amount — положительное число.
+        Перевод между двумя счетами
+        amount — положительное число
         """
 
         if amount <= 0:
