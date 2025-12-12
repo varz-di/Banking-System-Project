@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg # type: ignore
+from matplotlib.figure import Figure # type: ignore
 
 from src.bank_stats import BankStats
 from src.bank import Bank
